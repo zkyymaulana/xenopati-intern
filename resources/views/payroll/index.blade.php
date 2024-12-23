@@ -2,92 +2,78 @@
 
 @section('content')
     <div class="container">
-        <h1 class="mb-4">Perhitungan Gaji</h1>
-
-        <form id="payroll-form">
+        <h1 class="mb-4">Salary Calculation</h1>
+        @if (!session()->has('formSubmitted')) <!-- Form hanya ditampilkan jika belum disubmit -->
+        <form id="payroll-form" action="{{ route('payroll.index') }}" method="POST">
+            @csrf
             <div class="row mb-3">
-                <!-- Dropdown for Month Selection -->
                 <div class="col-md-4">
                     <label for="month" class="form-label">Bulan</label>
                     <select name="month" id="month" class="form-select">
+                        @php
+                            $currentMonth = date('n'); // Mengambil bulan saat ini (1-12)
+                        @endphp
                         @foreach ($months as $key => $month)
-                            <option value="{{ $key + 1 }}">{{ $month }}</option>
+                            <option value="{{ $key + 1 }}" {{ ($key + 1) == $currentMonth ? 'selected' : '' }}>{{ $month }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <!-- Dropdown for Year Selection -->
                 <div class="col-md-4">
                     <label for="year" class="form-label">Tahun</label>
                     <select name="year" id="year" class="form-select">
-                        @for ($i = 2020; $i <= date('Y') + 5; $i++) <!-- Extend range to 5 years ahead -->
-                            <option value="{{ $i }}">{{ $i }}</option>
+                        @php
+                            $currentYear = date('Y'); // Mengambil tahun saat ini
+                        @endphp
+                        @for ($i = 2020; $i <= date('Y') + 5; $i++)
+                            <option value="{{ $i }}" {{ $i == $currentYear ? 'selected' : '' }}>{{ $i }}</option>
                         @endfor
                     </select>
                 </div>
 
-                <!-- Button for Calculate -->
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-80">Hitung</button>
                 </div>
             </div>
         </form>
+        @endif
 
-        <!-- Payroll Results Table -->
-        <table class="table table-bordered">
-            <thead class="table-light">
-                <tr>
-                    <th>Periode</th>
-                    <th>Pegawai</th>
-                    <th>Gaji Pokok</th>
-                    <th>Bonus</th>
-                    <th>BPJS</th>
-                    <th>JP</th>
-                    <th>Cicilan</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody id="payroll-results">
-                <!-- Dynamic rows will be appended here -->
-            </tbody>
-        </table>
-    </div>
-
-    <script>
-        document.getElementById('payroll-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-            const url = "{{ route('payroll.calculate') }}";
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                    'Accept': 'application/json',
-                },
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                const results = document.getElementById('payroll-results');
-                results.innerHTML = '';
-
-                data.forEach(row => {
-                    results.innerHTML += `
+        @if(isset($results) && count($results) > 0)
+            <h2 class="mt-4">Salary calculation results</h2>
+            <table class="table table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th>Period</th>
+                        <th>Employee</th>
+                        <th>Basic Salary</th>
+                        <th>Bonus</th>
+                        <th>BPJS</th>
+                        <th>JP</th>
+                        <th>Loan</th>
+                        <th>Total Salary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($results as $result)
                         <tr>
-                            <td>${row.period}</td>
-                            <td>${row.employee}</td>
-                            <td>${row.basic_salary.toLocaleString('id-ID')}</td>
-                            <td>${row.bonus.toLocaleString('id-ID')}</td>
-                            <td>${row.bpjs.toLocaleString('id-ID')}</td>
-                            <td>${row.jp.toLocaleString('id-ID')}</td>
-                            <td>${row.loan.toLocaleString('id-ID')}</td>
-                            <td>${row.total_salary.toLocaleString('id-ID')}</td>
+                            <td>
+                                @if (isset($result['month']) && isset($result['year']))
+                                    {{ date('F', mktime(0, 0, 0, $result['month'], 1)) }} {{ $result['year'] }}
+                                @else
+                                    N/A
+                                @endif
+                            </td>
+                            <td>{{ $result['employee']->name }}</td>
+                            <td>{{ $result['basic_salary'] }}</td>
+                            <td>{{ $result['bonus'] }}</td>
+                            <td>{{ $result['bpjs'] }}</td>
+                            <td>{{ $result['jp'] }}</td>
+                            <td>{{ $result['loan'] }}</td>
+                            <td>{{ $result['total_salary'] }}</td>
                         </tr>
-                    `;
-                });
-            });
-        });
-    </script>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
 @endsection

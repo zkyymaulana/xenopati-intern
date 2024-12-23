@@ -95,6 +95,6 @@ class EmpSalaryController extends Controller
     {
         $empSalary = EmpSalary::findOrFail($id);
         $empSalary->delete();
-        return redirect()->route('emp-salaries.index')->with('success', 'Salary deleted successfully.');
+        return redirect()->route('emp-salaries.index')->with('error', 'Salary deleted successfully.');
     }
 }

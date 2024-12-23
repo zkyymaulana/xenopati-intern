@@ -39,24 +39,35 @@
         </div>
         <div class="form-group">
             <label for="bonus">Bonus</label>
-            <input type="text" name="bonus" class="form-control" value="{{ $empSalary->bonus }}" placeholder="e.g. 1000000">
+            <input type="text" name="bonus" class="form-control" value="0" readonly>
         </div>
         <div class="form-group">
             <label for="bpjs">BPJS</label>
-            <input type="text" name="bpjs" class="form-control" value="{{ $empSalary->bpjs }}" placeholder="e.g. 50000">
+            <input type="text" name="bpjs" class="form-control" value="0" readonly>
         </div>
         <div class="form-group">
             <label for="jp">JP</label>
-            <input type="text" name="jp" class="form-control" value="{{ $empSalary->jp }}" placeholder="e.g. 200000">
-        </div>
-        <div class="form-group">
-            <label for="loan">Loan</label>
-            <input type="text" name="loan" class="form-control" value="{{ $empSalary->loan }}" placeholder="e.g. 300000">
+            <input type="text" name="jp" class="form-control" value="0" readonly>
         </div>
         <div class="form-group">
             <label for="total_salary">Total Salary</label>
-            <input type="text" name="total_salary" class="form-control" value="{{ $empSalary->total_salary }}" placeholder="e.g. 6000000" required>
+            <input type="text" name="total_salary" class="form-control" value="{{ $empSalary->total_salary }}" required readonly id="total_salary">
         </div>
         <button type="submit" class="btn btn-success">Update</button>
     </form>
+
+    <script>
+        function calculateTotal() {
+            const basicSalary = parseFloat(document.querySelector('input[name="basic_salary"]').value) || 0;
+            const loan = parseFloat(document.querySelector('input[name="loan"]').value) || 0;
+
+            const totalSalary = basicSalary; // Total salary hanya berdasarkan basic salary
+            document.getElementById('total_salary').value = totalSalary.toFixed(2);
+        }
+
+        document.querySelector('input[name="basic_salary"]').addEventListener('input', calculateTotal);
+
+        // Hitung total saat halaman dimuat
+        window.onload = calculateTotal;
+    </script>
 @endsection

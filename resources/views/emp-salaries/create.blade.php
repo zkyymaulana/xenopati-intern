@@ -35,25 +35,38 @@
             <input type="text" name="basic_salary" class="form-control" placeholder="e.g. 5000000" required>
         </div>
         <div class="form-group">
-            <label for="bonus">Bonus</label>
-            <input type="text" name="bonus" class="form-control" placeholder="e.g. 1000000">
-        </div>
-        <div class="form-group">
-            <label for="bpjs">BPJS</label>
-            <input type="text" name="bpjs" class="form-control" placeholder="e.g. 50000">
-        </div>
-        <div class="form-group">
-            <label for="jp">JP</label>
-            <input type="text" name="jp" class="form-control" placeholder="e.g. 200000">
-        </div>
-        <div class="form-group">
             <label for="loan">Loan</label>
             <input type="text" name="loan" class="form-control" placeholder="e.g. 300000">
         </div>
         <div class="form-group">
+            <label for="bonus">Bonus</label>
+            <input type="text" name="bonus" class="form-control" value="0" readonly>
+        </div>
+        <div class="form-group">
+            <label for="bpjs">BPJS</label>
+            <input type="text" name="bpjs" class="form-control" value="0" readonly>
+        </div>
+        <div class="form-group">
+            <label for="jp">JP</label>
+            <input type="text" name="jp" class="form-control" value="0" readonly>
+        </div>
+        <div class="form-group">
             <label for="total_salary">Total Salary</label>
-            <input type="text" name="total_salary" class="form-control" placeholder="e.g. 6000000" required>
+            <input type="text" name="total_salary" class="form-control" required readonly id="total_salary">
         </div>
         <button type="submit" class="btn btn-success">Save</button>
     </form>
+
+    <script>
+        function calculateTotal() {
+            const basicSalary = parseFloat(document.querySelector('input[name="basic_salary"]').value) || 0;
+            const loan = parseFloat(document.querySelector('input[name="loan"]').value) || 0;
+
+            const totalSalary = basicSalary - loan;
+            document.getElementById('total_salary').value = totalSalary.toFixed(2);
+        }
+
+        document.querySelector('input[name="basic_salary"]').addEventListener('input', calculateTotal);
+        document.querySelector('input[name="loan"]').addEventListener('input', calculateTotal);
+    </script>
 @endsection
