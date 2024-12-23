@@ -37,8 +37,8 @@
                     <td>{{ $presence->employee->name }}</td>
                     <td>{{ $presence->check_in }}</td>
                     <td>{{ $presence->check_out }}</td>
-                    <td>{{ abs($presence->late_in) }}</td>
-                    <td>{{ abs($presence->early_out) }}</td>
+                    <td>{{ $presence->late_in }}</td>
+                    <td>{{ $presence->early_out }}</td>
                     <td>
                         <a href="{{ route('emp-presences.edit', $presence->id) }}" class="btn btn-warning btn-sm">Edit</a>
                         <form action="{{ route('emp-presences.destroy', $presence->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this presence?');">

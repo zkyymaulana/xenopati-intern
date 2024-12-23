@@ -38,17 +38,21 @@ class EmpPresence extends Model
         // Hitung keterlambatan
         $checkInTime = strtotime($checkIn);
         if ($checkInTime > $workStart) {
-            $this->late_in = ($checkInTime - $workStart) / 60; 
+            // Keterlambatan dalam detik
+            $this->late_in = ($checkInTime - $workStart) * -1; 
         } else {
-            $this->late_in = ($workStart - $checkInTime) / 60; 
+            // Datang lebih awal
+            $this->late_in = ($workStart - $checkInTime); 
         }
 
         // Hitung pulang cepat
         $checkOutTime = strtotime($checkOut);
         if ($checkOutTime < $workEnd) {
-            $this->early_out = ($checkOutTime - $workEnd) / 60; 
+            // Pulang cepat dalam detik
+            $this->early_out = ($checkOutTime - $workEnd); 
         } else {
-            $this->early_out = 0; // tidak dihitung jika pulang lebih dari jam kerja
+            // Tidak dihitung jika pulang lebih dari jam kerja
+            $this->early_out = 0; 
         }
     }
 

@@ -30,14 +30,14 @@ class EmpPresenceController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'employee_id' => 'required|exists:employees,id',
-            'check_in' => 'required|date',
-            'check_out' => 'nullable|date|after:check_in',
-        ]);
+{
+    $validated = $request->validate([
+        'employee_id' => 'required|exists:employees,id',
+        'check_in' => 'required|date',
+        'check_out' => 'nullable|date|after:check_in',
+    ]);
 
-        EmpPresence::create($validated);
+    EmpPresence::create($validated);
 
     return redirect()->route('emp-presences.index')->with('success', 'Presence recorded successfully.');
 }
@@ -54,12 +54,12 @@ class EmpPresenceController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit($id)
-    {
-    $presence = EmpPresence::findOrFail($id);
-    $employees = Employee::all(); 
+{
+    $empPresence = EmpPresence::findOrFail($id);
+    $employees = Employee::all();
 
-    return view('emp-presences.edit', compact('presence', 'employees'));
-    }
+    return view('emp-presences.edit', compact('empPresence', 'employees'));
+}
 
     /**
      * Update the specified resource in storage.
