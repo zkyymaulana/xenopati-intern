@@ -21,28 +21,30 @@
     <table class="table table-striped mt-4">
         <thead>
             <tr>
+                <th>#</th>
                 <th>Employee</th>
                 <th>Check In</th>
                 <th>Check Out</th>
-                <th>Late In</th>
-                <th>Early Out</th>
+                <th>Late In (minutes)</th>
+                <th>Early Out (minutes)</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($empPresences as $presence)
                 <tr>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $presence->employee->name }}</td>
-                    <td>{{ \Carbon\Carbon::parse($presence->check_in)->format('Y-m-d H:i') }}</td>
-                    <td>{{ \Carbon\Carbon::parse($presence->check_out)->format('Y-m-d H:i') }}</td>
-                    <td>{{ convertMinutesToHours($presence->late_in) }}</td>
-                    <td>{{ convertMinutesToHours($presence->early_out) }}</td>
+                    <td>{{ $presence->check_in }}</td>
+                    <td>{{ $presence->check_out }}</td>
+                    <td>{{ abs($presence->late_in) }}</td>
+                    <td>{{ abs($presence->early_out) }}</td>
                     <td>
-                        <a href="{{ route('emp-presences.edit', $presence->id) }}" class="btn btn-warning">Edit</a>
+                        <a href="{{ route('emp-presences.edit', $presence->id) }}" class="btn btn-warning btn-sm">Edit</a>
                         <form action="{{ route('emp-presences.destroy', $presence->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this presence?');">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-danger">Delete</button>
+                            <button class="btn btn-danger btn-sm">Delete</button>
                         </form>
                     </td>
                 </tr>
@@ -50,11 +52,3 @@
         </tbody>
     </table>
 @endsection
-
-@php
-function convertMinutesToHours($minutes) {
-    $hours = floor($minutes / 60);
-    $remainingMinutes = $minutes % 60;
-    return "{$hours} h {$remainingMinutes} m";
-}
-@endphp

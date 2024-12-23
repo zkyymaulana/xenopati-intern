@@ -34,17 +34,26 @@ class PayrollController extends Controller
                 ->whereYear('check_in', $year)
                 ->get();
 
-            // Hitung denda bonus (keterlambatan dan pulang cepat)
+            // Hitung bonus
             $bonus = 0;
             foreach ($presences as $presence) {
-                $bonus -= ($presence->late_in * 5000) + ($presence->early_out * 5000);
+                // Denda untuk keterlambatan
+                if ($presence->late_in > 5) {
+                    $bonus -= ($presence->late_in - 5) * 5000; // Denda Rp 5.000 per menit
+                }
+                // Denda untuk pulang cepat
+                if ($presence->early_out > 0) {
+                    $bonus -= $presence->early_out * 5000; // Denda Rp 5.000 per menit
+                }
             }
 
-            // Hitung komponen gaji
+            // Ambil gaji dasar
             $basic_salary = $employee->salaries()->where('month', $month)->where('year', $year)->value('basic_salary');
-            $bpjs = 0.02 * $basic_salary;
-            $jp = 0.01 * $basic_salary;
             $loan = $employee->salaries()->where('month', $month)->where('year', $year)->value('loan');
+
+            // Hitung BPJS dan JP
+            $bpjs = 0.02 * $basic_salary; // 2% dari basic salary
+            $jp = 0.01 * $basic_salary; // 1% dari basic salary
 
             // Hitung total gaji
             $total_salary = ($basic_salary + $bonus) - ($bpjs + $jp + $loan);

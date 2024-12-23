@@ -33,15 +33,14 @@ class EmpPresenceController extends Controller
     {
         $validated = $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'check_in' => 'nullable|date',
-            'check_out' => 'nullable|date',
-            'late_in' => 'nullable|integer',
-            'early_out' => 'nullable|integer',
+            'check_in' => 'required|date',
+            'check_out' => 'nullable|date|after:check_in',
         ]);
 
         EmpPresence::create($validated);
-        return redirect()->route('emp-presences.index')->with('success', 'Presence recorded successfully.');
-    }
+
+    return redirect()->route('emp-presences.index')->with('success', 'Presence recorded successfully.');
+}
 
     /**
      * Display the specified resource.
@@ -54,11 +53,12 @@ class EmpPresenceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        $empPresence = EmpPresence::findOrFail($id);
-        $employees = Employee::all();
-        return view('emp-presences.edit', compact('empPresence', 'employees'));
+    $presence = EmpPresence::findOrFail($id);
+    $employees = Employee::all(); 
+
+    return view('emp-presences.edit', compact('presence', 'employees'));
     }
 
     /**
